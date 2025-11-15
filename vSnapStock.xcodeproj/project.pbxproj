@@ -1,0 +1,600 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		CEDAFBD82EC83B2C00E3FE7F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEDAFBBB2EC83B2A00E3FE7F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEDAFBC22EC83B2A00E3FE7F;
+			remoteInfo = vSnapStock;
+		};
+		CEDAFBE22EC83B2C00E3FE7F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEDAFBBB2EC83B2A00E3FE7F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEDAFBC22EC83B2A00E3FE7F;
+			remoteInfo = vSnapStock;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CEDAFBC32EC83B2A00E3FE7F /* vSnapStock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vSnapStock.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEDAFBD72EC83B2C00E3FE7F /* vSnapStockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vSnapStockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEDAFBE12EC83B2C00E3FE7F /* vSnapStockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vSnapStockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CEDAFBE92EC83B2C00E3FE7F /* Exceptions for "vSnapStock" folder in "vSnapStock" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CEDAFBC22EC83B2A00E3FE7F /* vSnapStock */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		CEDAFBC52EC83B2A00E3FE7F /* vSnapStock */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CEDAFBE92EC83B2C00E3FE7F /* Exceptions for "vSnapStock" folder in "vSnapStock" target */,
+			);
+			path = vSnapStock;
+			sourceTree = "<group>";
+		};
+		CEDAFBDA2EC83B2C00E3FE7F /* vSnapStockTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = vSnapStockTests;
+			sourceTree = "<group>";
+		};
+		CEDAFBE42EC83B2C00E3FE7F /* vSnapStockUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = vSnapStockUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CEDAFBC02EC83B2A00E3FE7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBD42EC83B2C00E3FE7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBDE2EC83B2C00E3FE7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CEDAFBBA2EC83B2A00E3FE7F = {
+			isa = PBXGroup;
+			children = (
+				CEDAFBC52EC83B2A00E3FE7F /* vSnapStock */,
+				CEDAFBDA2EC83B2C00E3FE7F /* vSnapStockTests */,
+				CEDAFBE42EC83B2C00E3FE7F /* vSnapStockUITests */,
+				CEDAFBC42EC83B2A00E3FE7F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CEDAFBC42EC83B2A00E3FE7F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CEDAFBC32EC83B2A00E3FE7F /* vSnapStock.app */,
+				CEDAFBD72EC83B2C00E3FE7F /* vSnapStockTests.xctest */,
+				CEDAFBE12EC83B2C00E3FE7F /* vSnapStockUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CEDAFBC22EC83B2A00E3FE7F /* vSnapStock */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEDAFBEA2EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStock" */;
+			buildPhases = (
+				CEDAFBBF2EC83B2A00E3FE7F /* Sources */,
+				CEDAFBC02EC83B2A00E3FE7F /* Frameworks */,
+				CEDAFBC12EC83B2A00E3FE7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CEDAFBC52EC83B2A00E3FE7F /* vSnapStock */,
+			);
+			name = vSnapStock;
+			packageProductDependencies = (
+			);
+			productName = vSnapStock;
+			productReference = CEDAFBC32EC83B2A00E3FE7F /* vSnapStock.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CEDAFBD62EC83B2C00E3FE7F /* vSnapStockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEDAFBEF2EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStockTests" */;
+			buildPhases = (
+				CEDAFBD32EC83B2C00E3FE7F /* Sources */,
+				CEDAFBD42EC83B2C00E3FE7F /* Frameworks */,
+				CEDAFBD52EC83B2C00E3FE7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CEDAFBD92EC83B2C00E3FE7F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CEDAFBDA2EC83B2C00E3FE7F /* vSnapStockTests */,
+			);
+			name = vSnapStockTests;
+			packageProductDependencies = (
+			);
+			productName = vSnapStockTests;
+			productReference = CEDAFBD72EC83B2C00E3FE7F /* vSnapStockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CEDAFBE02EC83B2C00E3FE7F /* vSnapStockUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEDAFBF22EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStockUITests" */;
+			buildPhases = (
+				CEDAFBDD2EC83B2C00E3FE7F /* Sources */,
+				CEDAFBDE2EC83B2C00E3FE7F /* Frameworks */,
+				CEDAFBDF2EC83B2C00E3FE7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CEDAFBE32EC83B2C00E3FE7F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CEDAFBE42EC83B2C00E3FE7F /* vSnapStockUITests */,
+			);
+			name = vSnapStockUITests;
+			packageProductDependencies = (
+			);
+			productName = vSnapStockUITests;
+			productReference = CEDAFBE12EC83B2C00E3FE7F /* vSnapStockUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CEDAFBBB2EC83B2A00E3FE7F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					CEDAFBC22EC83B2A00E3FE7F = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					CEDAFBD62EC83B2C00E3FE7F = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = CEDAFBC22EC83B2A00E3FE7F;
+					};
+					CEDAFBE02EC83B2C00E3FE7F = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = CEDAFBC22EC83B2A00E3FE7F;
+					};
+				};
+			};
+			buildConfigurationList = CEDAFBBE2EC83B2A00E3FE7F /* Build configuration list for PBXProject "vSnapStock" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CEDAFBBA2EC83B2A00E3FE7F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CEDAFBC42EC83B2A00E3FE7F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CEDAFBC22EC83B2A00E3FE7F /* vSnapStock */,
+				CEDAFBD62EC83B2C00E3FE7F /* vSnapStockTests */,
+				CEDAFBE02EC83B2C00E3FE7F /* vSnapStockUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CEDAFBC12EC83B2A00E3FE7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBD52EC83B2C00E3FE7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBDF2EC83B2C00E3FE7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CEDAFBBF2EC83B2A00E3FE7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBD32EC83B2C00E3FE7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEDAFBDD2EC83B2C00E3FE7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CEDAFBD92EC83B2C00E3FE7F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEDAFBC22EC83B2A00E3FE7F /* vSnapStock */;
+			targetProxy = CEDAFBD82EC83B2C00E3FE7F /* PBXContainerItemProxy */;
+		};
+		CEDAFBE32EC83B2C00E3FE7F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEDAFBC22EC83B2A00E3FE7F /* vSnapStock */;
+			targetProxy = CEDAFBE22EC83B2C00E3FE7F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CEDAFBEB2EC83B2C00E3FE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = vSnapStock/vSnapStock.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = vSnapStock/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStock";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CEDAFBEC2EC83B2C00E3FE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = vSnapStock/vSnapStock.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = vSnapStock/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStock";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CEDAFBED2EC83B2C00E3FE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CEDAFBEE2EC83B2C00E3FE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CEDAFBF02EC83B2C00E3FE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStockTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/vSnapStock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/vSnapStock";
+			};
+			name = Debug;
+		};
+		CEDAFBF12EC83B2C00E3FE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStockTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/vSnapStock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/vSnapStock";
+			};
+			name = Release;
+		};
+		CEDAFBF32EC83B2C00E3FE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStockUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = vSnapStock;
+			};
+			name = Debug;
+		};
+		CEDAFBF42EC83B2C00E3FE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q4Z7U3EAU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Swift-Sawada.vSnapStockUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = vSnapStock;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CEDAFBBE2EC83B2A00E3FE7F /* Build configuration list for PBXProject "vSnapStock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEDAFBED2EC83B2C00E3FE7F /* Debug */,
+				CEDAFBEE2EC83B2C00E3FE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEDAFBEA2EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEDAFBEB2EC83B2C00E3FE7F /* Debug */,
+				CEDAFBEC2EC83B2C00E3FE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEDAFBEF2EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEDAFBF02EC83B2C00E3FE7F /* Debug */,
+				CEDAFBF12EC83B2C00E3FE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEDAFBF22EC83B2C00E3FE7F /* Build configuration list for PBXNativeTarget "vSnapStockUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEDAFBF32EC83B2C00E3FE7F /* Debug */,
+				CEDAFBF42EC83B2C00E3FE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CEDAFBBB2EC83B2A00E3FE7F /* Project object */;
+}
