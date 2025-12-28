@@ -6,5 +6,9 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>カードに追加する写真を撮影するためにカメラを使用します</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>カードに追加する写真を選択するためにフォトライブラリにアクセスします</string>
 </dict>
 </plist>

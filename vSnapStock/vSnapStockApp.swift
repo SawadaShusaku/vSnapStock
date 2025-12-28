@@ -6,16 +6,29 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftData
 
 @main
 struct vSnapStockApp: App {
-    let persistenceController = PersistenceController.shared
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([Card.self])
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .automatic
+        )
+
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
+        .modelContainer(sharedModelContainer)
     }
 }
