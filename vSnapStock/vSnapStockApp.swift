@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct vSnapStockApp: App {
+    @State private var colorManager = ColorSettingsManager.shared
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([Card.self])
         let modelConfiguration = ModelConfiguration(
@@ -28,6 +30,7 @@ struct vSnapStockApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(colorManager.appearanceMode.colorScheme)
         }
         .modelContainer(sharedModelContainer)
     }

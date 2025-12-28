@@ -19,6 +19,20 @@ struct ColorSettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                // 外観モード
+                Section {
+                    Picker("外観モード", selection: $colorManager.appearanceMode) {
+                        ForEach(AppAppearanceMode.allCases, id: \.self) { mode in
+                            Text(mode.displayName).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("外観モード")
+                } footer: {
+                    Text("アプリ全体のライト/ダークモードを切り替えます")
+                }
+
                 // 基本プリセット（折りたたみ可能）
                 Section {
                     DisclosureGroup(isExpanded: $isBasicPresetsExpanded) {

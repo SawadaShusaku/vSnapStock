@@ -189,6 +189,29 @@ struct RGBAColor: Codable, Equatable {
     }
 }
 
+// MARK: - App Appearance Mode
+enum AppAppearanceMode: Int, Codable, CaseIterable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var displayName: String {
+        switch self {
+        case .system: return "システム"
+        case .light: return "ライト"
+        case .dark: return "ダーク"
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+}
+
 // MARK: - Color Settings Manager
 @Observable
 class ColorSettingsManager {
@@ -203,6 +226,12 @@ class ColorSettingsManager {
     var customPresets: [ColorPreset] {
         didSet {
             saveSettings()
+        }
+    }
+
+    var appearanceMode: AppAppearanceMode {
+        didSet {
+            UserDefaults.standard.set(appearanceMode.rawValue, forKey: appearanceModeKey)
         }
     }
 
@@ -238,6 +267,7 @@ class ColorSettingsManager {
 
     private let userDefaultsKey = "colorSettings"
     private let customPresetsKey = "customColorPresets"
+    private let appearanceModeKey = "appAppearanceMode"
 
     private init() {
         // 保存された設定を読み込む
@@ -255,6 +285,10 @@ class ColorSettingsManager {
         } else {
             self.customPresets = []
         }
+
+        // 外観モードを読み込む
+        let modeRawValue = UserDefaults.standard.integer(forKey: appearanceModeKey)
+        self.appearanceMode = AppAppearanceMode(rawValue: modeRawValue) ?? .system
     }
 
     func saveSettings() {

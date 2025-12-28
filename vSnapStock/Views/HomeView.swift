@@ -23,6 +23,7 @@ struct HomeView: View {
     @State private var showingTrash = false
     @State private var showingSettings = false
     @State private var showingColorSettings = false
+    @State private var showingOCRSettings = false
     @State private var draggingCard: Card?
     @State private var colorManager = ColorSettingsManager.shared
 
@@ -92,8 +93,10 @@ struct HomeView: View {
                 }
             )
             .navigationTitle("vSnapStock")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(colorManager.hasBackgroundGradient ? .dark : nil, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     menuButton
@@ -113,6 +116,9 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showingColorSettings) {
                 ColorSettingsView()
+            }
+            .sheet(isPresented: $showingOCRSettings) {
+                OCRSettingsView()
             }
         }
     }
@@ -169,6 +175,12 @@ struct HomeView: View {
                 showingColorSettings = true
             } label: {
                 Label("カラー", systemImage: "paintpalette")
+            }
+
+            Button {
+                showingOCRSettings = true
+            } label: {
+                Label("OCR設定", systemImage: "text.viewfinder")
             }
 
             Button {

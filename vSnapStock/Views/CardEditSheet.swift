@@ -35,6 +35,13 @@ struct CardEditSheet: View {
     private let maxTitleLength = 40
     private let maxDescriptionLength = 1000
 
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateFormat = "yyyy年M月d日"
+        return formatter
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -70,7 +77,18 @@ struct CardEditSheet: View {
                 }
             }
             .sheet(isPresented: $showPhotoSheet) {
-                PhotoCaptureSheet(photos: $photos)
+                PhotoCaptureSheet(
+                    photos: $photos,
+                    onDateRecognized: { date in
+                        setCurrentDate(date)
+                    },
+                    onProductNameRecognized: { name in
+                        // 商品名をタイトルに設定（空の場合のみ）
+                        if title.isEmpty {
+                            title = String(name.prefix(maxTitleLength))
+                        }
+                    }
+                )
             }
         }
     }
@@ -190,7 +208,7 @@ struct CardEditSheet: View {
                 Spacer()
 
                 if let date = currentDate {
-                    Text(date, style: .date)
+                    Text(dateFormatter.string(from: date))
                         .foregroundColor(.secondary)
                     Button {
                         clearCurrentDate()
@@ -218,6 +236,7 @@ struct CardEditSheet: View {
                     displayedComponents: .date
                 )
                 .datePickerStyle(.graphical)
+                .environment(\.locale, Locale(identifier: "ja_JP"))
             }
         }
     }
