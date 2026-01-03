@@ -21,16 +21,16 @@ struct ColorSettingsView: View {
             List {
                 // 外観モード
                 Section {
-                    Picker("外観モード", selection: $colorManager.appearanceMode) {
+                    Picker(String(localized: "color.appearance_mode"), selection: $colorManager.appearanceMode) {
                         ForEach(AppAppearanceMode.allCases, id: \.self) { mode in
                             Text(mode.displayName).tag(mode)
                         }
                     }
                     .pickerStyle(.segmented)
                 } header: {
-                    Text("外観モード")
+                    Text(String(localized: "color.appearance_mode"))
                 } footer: {
-                    Text("アプリ全体のライト/ダークモードを切り替えます")
+                    Text(String(localized: "color.appearance_description"))
                 }
 
                 // 基本プリセット（折りたたみ可能）
@@ -58,7 +58,7 @@ struct ColorSettingsView: View {
                                     )
                                     editingPreset = editablePreset
                                 } label: {
-                                    Label("編集してカスタム作成", systemImage: "pencil")
+                                    Label(String(localized: "color.edit_and_create_custom"), systemImage: "pencil")
                                 }
                             }
                         }
@@ -66,7 +66,7 @@ struct ColorSettingsView: View {
                         HStack {
                             Image(systemName: "paintpalette")
                                 .foregroundColor(.blue)
-                            Text("基本プリセット")
+                            Text(String(localized: "color.basic_presets"))
                                 .font(.headline)
                         }
                     }
@@ -97,7 +97,7 @@ struct ColorSettingsView: View {
                                     )
                                     editingPreset = editablePreset
                                 } label: {
-                                    Label("編集してカスタム作成", systemImage: "pencil")
+                                    Label(String(localized: "color.edit_and_create_custom"), systemImage: "pencil")
                                 }
                             }
                         }
@@ -105,7 +105,7 @@ struct ColorSettingsView: View {
                         HStack {
                             Image(systemName: "square.stack.3d.down.forward.fill")
                                 .foregroundColor(.purple)
-                            Text("グラデーション")
+                            Text(String(localized: "color.gradient"))
                                 .font(.headline)
                         }
                     }
@@ -126,13 +126,13 @@ struct ColorSettingsView: View {
                                 Button(role: .destructive) {
                                     colorManager.removeCustomPreset(preset)
                                 } label: {
-                                    Label("削除", systemImage: "trash")
+                                    Label(String(localized: "button.delete"), systemImage: "trash")
                                 }
 
                                 Button {
                                     editingPreset = preset
                                 } label: {
-                                    Label("編集", systemImage: "pencil")
+                                    Label(String(localized: "color.edit_color"), systemImage: "pencil")
                                 }
                                 .tint(.blue)
                             }
@@ -141,20 +141,20 @@ struct ColorSettingsView: View {
                         Button {
                             showingCustomColorEditor = true
                         } label: {
-                            Label("カスタムカラーを追加", systemImage: "plus.circle")
+                            Label(String(localized: "color.add_custom"), systemImage: "plus.circle")
                         }
                     } label: {
                         HStack {
                             Image(systemName: "slider.horizontal.3")
                                 .foregroundColor(.orange)
-                            Text("カスタム")
+                            Text(String(localized: "color.custom"))
                                 .font(.headline)
                         }
                     }
                 }
 
                 // プレビュー
-                Section("プレビュー") {
+                Section(String(localized: "color.preview")) {
                     PreviewCard()
                         .listRowBackground(
                             Group {
@@ -167,11 +167,11 @@ struct ColorSettingsView: View {
                         )
                 }
             }
-            .navigationTitle("カラー設定")
+            .navigationTitle(String(localized: "color.settings_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完了") {
+                    Button(String(localized: "button.done")) {
                         dismiss()
                     }
                 }
@@ -279,10 +279,10 @@ struct PreviewCard: View {
                         .foregroundColor(.gray)
                 }
 
-            Text("サンプルカード")
+            Text(String(localized: "color.sample_card"))
                 .font(.headline)
 
-            Text("賞味期限: 2025/01/15")
+            Text(String(localized: "date.best_before") + ": 2025/01/15")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -337,41 +337,41 @@ struct CustomColorEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("名前") {
-                    TextField("プリセット名", text: $name)
+                Section(String(localized: "color.name")) {
+                    TextField(String(localized: "color.preset_name"), text: $name)
                 }
 
-                Section("カードの色") {
-                    ColorPicker("カードカラー", selection: $cardColor, supportsOpacity: true)
+                Section(String(localized: "color.card_color")) {
+                    ColorPicker(String(localized: "color.card_color_short"), selection: $cardColor, supportsOpacity: true)
 
                     // RGBAスライダー
                     RGBASliders(color: $cardColor)
                 }
 
-                Section("背景") {
-                    Toggle("グラデーションを使用", isOn: $useGradient)
+                Section(String(localized: "color.background")) {
+                    Toggle(String(localized: "color.use_gradient"), isOn: $useGradient)
 
                     if useGradient {
-                        ColorPicker("開始色", selection: $gradientStartColor, supportsOpacity: true)
-                        ColorPicker("終了色", selection: $gradientEndColor, supportsOpacity: true)
+                        ColorPicker(String(localized: "color.start_color"), selection: $gradientStartColor, supportsOpacity: true)
+                        ColorPicker(String(localized: "color.end_color"), selection: $gradientEndColor, supportsOpacity: true)
 
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("角度")
+                                Text(String(localized: "color.angle"))
                                 Spacer()
                                 Text("\(Int(gradientAngle))°")
                             }
                             Slider(value: $gradientAngle, in: 0...360, step: 15)
                         }
                     } else {
-                        ColorPicker("背景カラー", selection: $backgroundColor, supportsOpacity: true)
+                        ColorPicker(String(localized: "color.background_color"), selection: $backgroundColor, supportsOpacity: true)
 
                         // RGBAスライダー
                         RGBASliders(color: $backgroundColor)
                     }
                 }
 
-                Section("プレビュー") {
+                Section(String(localized: "color.preview")) {
                     VStack(alignment: .leading, spacing: 8) {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.gray.opacity(0.3))
@@ -381,7 +381,7 @@ struct CustomColorEditorView: View {
                                     .foregroundColor(.gray)
                             }
 
-                        Text("サンプル")
+                        Text(String(localized: "color.sample"))
                             .font(.headline)
                     }
                     .padding(12)
@@ -390,16 +390,16 @@ struct CustomColorEditorView: View {
                     .listRowBackground(backgroundView)
                 }
             }
-            .navigationTitle(isEditing ? "カラーを編集" : "カスタムカラー")
+            .navigationTitle(isEditing ? String(localized: "color.edit_color") : String(localized: "color.custom_color_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button(String(localized: "button.cancel")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button(String(localized: "button.save")) {
                         var backgroundGradient: GradientSettings? = nil
                         if useGradient {
                             backgroundGradient = GradientSettings(
@@ -412,7 +412,7 @@ struct CustomColorEditorView: View {
 
                         let newPreset = ColorPreset(
                             id: preset?.id ?? UUID(),
-                            name: name.isEmpty ? "カスタム" : name,
+                            name: name.isEmpty ? String(localized: "color.custom") : name,
                             cardColor: RGBAColor(color: cardColor),
                             backgroundColor: RGBAColor(color: backgroundColor),
                             backgroundGradient: backgroundGradient

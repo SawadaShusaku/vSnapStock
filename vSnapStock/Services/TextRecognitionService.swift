@@ -339,23 +339,39 @@ actor TextRecognitionService {
 
     /// 単一テキストから日付を抽出
     private nonisolated func extractDateFromText(_ text: String) -> Date? {
-        let patterns: [String] = [
-            #"(\d{2,4})[\.．](\d{1,2})[\.．](\d{1,2})"#,
-            #"(\d{2,4})[/／](\d{1,2})[/／](\d{1,2})"#,
-            #"(\d{2,4})[-ー](\d{1,2})[-ー](\d{1,2})"#,
-            #"(\d{2,4})年(\d{1,2})月(\d{1,2})日"#,
+        // 年月日のパターン（日付あり）
+        let fullDatePatterns: [String] = [
+            #"(\d{2,4})[\.．]\s*(\d{1,2})[\.．]\s*(\d{1,2})"#,
+            #"(\d{2,4})[/／]\s*(\d{1,2})[/／]\s*(\d{1,2})"#,
+            #"(\d{2,4})[-ー]\s*(\d{1,2})[-ー]\s*(\d{1,2})"#,
+            #"(\d{2,4})年\s*(\d{1,2})月\s*(\d{1,2})日"#,
         ]
 
-        for pattern in patterns {
-            if let date = extractDate(from: text, pattern: pattern) {
+        for pattern in fullDatePatterns {
+            if let date = extractFullDate(from: text, pattern: pattern) {
                 return date
             }
         }
+
+        // 年月のみのパターン（日付省略、月末を使用）
+        let yearMonthPatterns: [String] = [
+            #"(\d{2,4})[\.．]\s*(\d{1,2})(?![\.．/／\-ー\d])"#,  // 2026. 7 または 2026.7
+            #"(\d{2,4})[/／]\s*(\d{1,2})(?![/／\-ー\d])"#,       // 2026/ 7 または 2026/7
+            #"(\d{2,4})[-ー]\s*(\d{1,2})(?![-ー\d])"#,           // 2026- 7 または 2026-7
+            #"(\d{2,4})年\s*(\d{1,2})月(?!\d)"#,                 // 2026年7月
+        ]
+
+        for pattern in yearMonthPatterns {
+            if let date = extractYearMonthDate(from: text, pattern: pattern) {
+                return date
+            }
+        }
+
         return nil
     }
 
-    /// 正規表現で日付を抽出
-    private nonisolated func extractDate(from text: String, pattern: String) -> Date? {
+    /// 正規表現で年月日を抽出
+    private nonisolated func extractFullDate(from text: String, pattern: String) -> Date? {
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
             return nil
         }
@@ -392,6 +408,46 @@ actor TextRecognitionService {
         components.year = year
         components.month = month
         components.day = day
+
+        return Calendar.current.date(from: components)
+    }
+
+    /// 正規表現で年月を抽出（日は月末を使用）
+    private nonisolated func extractYearMonthDate(from text: String, pattern: String) -> Date? {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+            return nil
+        }
+
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: range) else {
+            return nil
+        }
+
+        guard match.numberOfRanges >= 3,
+              let yearRange = Range(match.range(at: 1), in: text),
+              let monthRange = Range(match.range(at: 2), in: text) else {
+            return nil
+        }
+
+        var year = Int(text[yearRange]) ?? 0
+        let month = Int(text[monthRange]) ?? 0
+
+        // 2桁年を4桁に変換
+        if year < 100 {
+            year += 2000
+        }
+
+        // 妥当性チェック
+        guard year >= 2000 && year <= 2100,
+              month >= 1 && month <= 12 else {
+            return nil
+        }
+
+        // 月末日を計算
+        var components = DateComponents()
+        components.year = year
+        components.month = month + 1  // 翌月
+        components.day = 0            // 翌月の0日 = 今月の最終日
 
         return Calendar.current.date(from: components)
     }

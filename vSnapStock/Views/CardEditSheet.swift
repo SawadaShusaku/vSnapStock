@@ -25,9 +25,18 @@ struct CardEditSheet: View {
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var expirationType: ExpirationType = .bestBefore
 
-    enum ExpirationType: String, CaseIterable {
-        case bestBefore = "賞味期限"
-        case useBy = "消費期限"
+    enum ExpirationType: CaseIterable {
+        case bestBefore
+        case useBy
+
+        var localizedName: String {
+            switch self {
+            case .bestBefore:
+                return String(localized: "date.best_before")
+            case .useBy:
+                return String(localized: "date.use_by")
+            }
+        }
     }
 
     private var isNewCard: Bool { card == nil }
@@ -54,16 +63,16 @@ struct CardEditSheet: View {
                 // 期限セクション
                 expirationSection
             }
-            .navigationTitle(isNewCard ? "新規カード" : "カード編集")
+            .navigationTitle(isNewCard ? String(localized: "card.new_title") : String(localized: "card.edit_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button(String(localized: "button.cancel")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button(String(localized: "button.save")) {
                         saveCard()
                         dismiss()
                     }
@@ -83,9 +92,16 @@ struct CardEditSheet: View {
                         setCurrentDate(date)
                     },
                     onProductNameRecognized: { name in
-                        // 商品名をタイトルに設定（空の場合のみ）
-                        if title.isEmpty {
-                            title = String(name.prefix(maxTitleLength))
+                        // 商品名をタイトルに設定（常に上書き）
+                        title = String(name.prefix(maxTitleLength))
+                    },
+                    onDescriptionRecognized: { desc in
+                        // 説明を追加（既存の説明がある場合は改行して追加）
+                        if cardDescription.isEmpty {
+                            cardDescription = String(desc.prefix(maxDescriptionLength))
+                        } else {
+                            let newDesc = cardDescription + "\n" + desc
+                            cardDescription = String(newDesc.prefix(maxDescriptionLength))
                         }
                     }
                 )
@@ -130,7 +146,7 @@ struct CardEditSheet: View {
                             VStack {
                                 Image(systemName: "camera.fill")
                                     .font(.title2)
-                                Text("追加")
+                                Text(String(localized: "button.add"))
                                     .font(.caption)
                             }
                             .frame(width: 80, height: 80)
@@ -143,7 +159,7 @@ struct CardEditSheet: View {
                 .padding(.vertical, 8)
             }
         } header: {
-            Text("写真（\(photos.count)/\(maxPhotos)）")
+            Text(String(localized: "photo.count", defaultValue: "Photos (\(photos.count)/10)"))
         }
     }
 
@@ -158,7 +174,7 @@ struct CardEditSheet: View {
 
             ZStack(alignment: .topLeading) {
                 if cardDescription.isEmpty {
-                    Text("説明を入力...")
+                    Text(String(localized: "placeholder.enter_description"))
                         .foregroundColor(.gray)
                         .padding(.top, 8)
                         .padding(.leading, 4)
@@ -172,14 +188,14 @@ struct CardEditSheet: View {
                     }
             }
         } header: {
-            Text("基本情報")
+            Text(String(localized: "card.basic_info"))
         } footer: {
-            Text("説明: \(cardDescription.count)/\(maxDescriptionLength)文字")
+            Text(String(localized: "description.char_count", defaultValue: "Description: \(cardDescription.count)/\(maxDescriptionLength) chars"))
         }
     }
 
     private var expirationSection: some View {
-        Section("期限") {
+        Section(String(localized: "card.expiration")) {
             // 期限タイプ選択
             HStack {
                 Menu {
@@ -188,7 +204,7 @@ struct CardEditSheet: View {
                             switchExpirationType(to: type)
                         } label: {
                             HStack {
-                                Text(type.rawValue)
+                                Text(type.localizedName)
                                 if expirationType == type {
                                     Image(systemName: "checkmark")
                                 }
@@ -197,7 +213,7 @@ struct CardEditSheet: View {
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(expirationType.rawValue)
+                        Text(expirationType.localizedName)
                             .foregroundColor(.primary)
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.caption)
@@ -217,7 +233,7 @@ struct CardEditSheet: View {
                             .foregroundColor(.gray)
                     }
                 } else {
-                    Text("未設定")
+                    Text(String(localized: "date.not_set"))
                         .foregroundColor(.gray)
                 }
             }
@@ -228,7 +244,7 @@ struct CardEditSheet: View {
 
             if showDatePicker {
                 DatePicker(
-                    expirationType.rawValue,
+                    expirationType.localizedName,
                     selection: Binding(
                         get: { currentDate ?? Date() },
                         set: { setCurrentDate($0) }

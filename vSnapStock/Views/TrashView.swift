@@ -52,19 +52,19 @@ struct TrashView: View {
                     }
                 }
             )
-            .navigationTitle("ゴミ箱")
+            .navigationTitle(String(localized: "trash.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("閉じる") {
+                    Button(String(localized: "button.close")) {
                         dismiss()
                     }
                 }
                 if !deletedCards.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("すべて削除") {
+                        Button(String(localized: "button.delete_all")) {
                             showEmptyConfirmation = true
                         }
                         .foregroundColor(.red)
@@ -72,16 +72,16 @@ struct TrashView: View {
                 }
             }
             .confirmationDialog(
-                "ゴミ箱を空にしますか？",
+                String(localized: "trash.dialog_title"),
                 isPresented: $showEmptyConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("すべて削除", role: .destructive) {
+                Button(String(localized: "button.delete_all"), role: .destructive) {
                     emptyTrash()
                 }
-                Button("キャンセル", role: .cancel) {}
+                Button(String(localized: "button.cancel"), role: .cancel) {}
             } message: {
-                Text("この操作は取り消せません")
+                Text(String(localized: "trash.dialog_message"))
             }
             .onAppear {
                 cleanupExpiredCards()
@@ -94,7 +94,7 @@ struct TrashView: View {
             Image(systemName: "trash")
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
-            Text("ゴミ箱は空です")
+            Text(String(localized: "trash.empty"))
                 .font(.headline)
                 .foregroundColor(.gray)
         }
@@ -148,7 +148,7 @@ struct TrashCardItem: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(card.title.isEmpty ? "無題" : card.title)
+                Text(card.title.isEmpty ? String(localized: "card.untitled") : card.title)
                     .font(.headline)
                     .lineLimit(1)
 
@@ -172,7 +172,7 @@ struct TrashCardItem: View {
             Button {
                 card.restore()
             } label: {
-                Label("復元", systemImage: "arrow.uturn.backward")
+                Label(String(localized: "button.restore"), systemImage: "arrow.uturn.backward")
             }
 
             Divider()
@@ -180,7 +180,7 @@ struct TrashCardItem: View {
             Button(role: .destructive) {
                 onDelete()
             } label: {
-                Label("完全に削除", systemImage: "trash.fill")
+                Label(String(localized: "button.permanently_delete"), systemImage: "trash.fill")
             }
         }
     }
@@ -191,11 +191,11 @@ struct TrashCardItem: View {
         let daysLeft = calendar.dateComponents([.day], from: Date(), to: expiryDate).day ?? 0
 
         if daysLeft <= 0 {
-            return "まもなく削除されます"
+            return String(localized: "trash.delete_soon")
         } else if daysLeft == 1 {
-            return "あと1日で削除"
+            return String(localized: "trash.delete_in_1_day")
         } else {
-            return "あと\(daysLeft)日で削除"
+            return String(localized: "trash.delete_in_days", defaultValue: "Delete in \(daysLeft) days")
         }
     }
 }

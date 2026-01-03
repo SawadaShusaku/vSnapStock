@@ -19,12 +19,17 @@ final class CameraManager: NSObject {
     private(set) var isSessionRunning = false
     private(set) var recognizedItems: [RecognizedTextItem] = []
     private(set) var detectedDate: Date?
-    private(set) var selectedProductName: String?
+    var selectedProductName: String?  // 編集可能
+    var selectedDescription: String?  // 説明用
     private(set) var capturedImage: UIImage?
 
     var isFlashEnabled = false
+    var isTorchEnabled = false
     var isDateScanEnabled = true
     var isProductNameScanEnabled = true
+    var isDescriptionScanEnabled = false
+    var currentZoomFactor: CGFloat = 1.0
+    private(set) var maxZoomFactor: CGFloat = 5.0
 
     // MARK: - Internal
 
@@ -32,6 +37,7 @@ final class CameraManager: NSObject {
     private let recognitionService = TextRecognitionService()
     private var photoOutput: AVCapturePhotoOutput?
     private var videoOutput: AVCaptureVideoDataOutput?
+    private var currentDevice: AVCaptureDevice?
 
     // 設定マネージャー
     private let ocrSettings = OCRSettingsManager.shared
@@ -41,6 +47,7 @@ final class CameraManager: NSObject {
     private var isProcessing = false
     private var hasNotifiedDate = false
     private var hasSelectedProductName = false
+    private var hasSelectedDescription = false
 
     // セットアップ状態
     private var isSetupComplete = false
@@ -103,6 +110,11 @@ final class CameraManager: NSObject {
         selectedProductName = item.text
     }
 
+    func selectDescription(_ item: RecognizedTextItem) {
+        hasSelectedDescription = true
+        selectedDescription = item.text
+    }
+
     func resetDateDetection() {
         hasNotifiedDate = false
         detectedDate = nil
@@ -113,10 +125,60 @@ final class CameraManager: NSObject {
         selectedProductName = nil
     }
 
+    func resetDescriptionDetection() {
+        hasSelectedDescription = false
+        selectedDescription = nil
+    }
+
     func resetAllDetection() {
         resetDateDetection()
         resetProductNameDetection()
+        resetDescriptionDetection()
         recognizedItems = []
+    }
+
+    /// ズーム倍率を設定
+    func setZoom(_ factor: CGFloat) {
+        guard let device = currentDevice else { return }
+
+        let clampedFactor = max(1.0, min(factor, maxZoomFactor))
+
+        do {
+            try device.lockForConfiguration()
+            device.videoZoomFactor = clampedFactor
+            device.unlockForConfiguration()
+            currentZoomFactor = clampedFactor
+        } catch {
+            print("Failed to set zoom: \(error)")
+        }
+    }
+
+    /// ズーム倍率をトグル（1x ↔ 2x）
+    func toggleZoom() {
+        if currentZoomFactor < 1.5 {
+            setZoom(2.0)
+        } else {
+            setZoom(1.0)
+        }
+    }
+
+    /// トーチ（ライト）をトグル
+    func toggleTorch() {
+        guard let device = currentDevice, device.hasTorch else { return }
+
+        do {
+            try device.lockForConfiguration()
+            if device.torchMode == .on {
+                device.torchMode = .off
+                isTorchEnabled = false
+            } else {
+                try device.setTorchModeOn(level: 1.0)
+                isTorchEnabled = true
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Failed to toggle torch: \(error)")
+        }
     }
 
     // MARK: - Private Methods
@@ -142,6 +204,8 @@ final class CameraManager: NSObject {
         }
 
         session.addInput(input)
+        currentDevice = backCamera
+        maxZoomFactor = min(backCamera.activeFormat.videoMaxZoomFactor, 10.0)
 
         // 写真撮影用出力
         let photoOutput = AVCapturePhotoOutput()
@@ -183,14 +247,14 @@ final class CameraManager: NSObject {
 
             // テキストアイテム更新（表示数上限を適用）
             let maxCount = ocrSettings.maxDisplayCount
-            if isProductNameScanEnabled && !hasSelectedProductName {
-                // 商品名選択前：すべて表示（上限あり）
+            let textScanEnabled = (isProductNameScanEnabled && !hasSelectedProductName) ||
+                                  (isDescriptionScanEnabled && !hasSelectedDescription)
+
+            if textScanEnabled {
+                // テキスト選択前：すべて表示（上限あり）
                 recognizedItems = Array(visibleItems.prefix(maxCount))
-            } else if hasSelectedProductName {
-                // 商品名選択後：日付のみ表示（選択した商品名はステータスに表示）
-                recognizedItems = Array(visibleItems.filter { $0.isDate }.prefix(maxCount))
-            } else if !isProductNameScanEnabled {
-                // 商品名スキャン無効：日付のみ表示
+            } else {
+                // テキスト選択後 or スキャン無効：日付のみ表示
                 recognizedItems = Array(visibleItems.filter { $0.isDate }.prefix(maxCount))
             }
         }
@@ -202,8 +266,8 @@ final class CameraManager: NSObject {
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     nonisolated func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         Task { @MainActor in
-            // 両方のスキャンが無効ならスキップ
-            guard isDateScanEnabled || isProductNameScanEnabled else {
+            // すべてのスキャンが無効ならスキップ
+            guard isDateScanEnabled || isProductNameScanEnabled || isDescriptionScanEnabled else {
                 recognizedItems = []
                 return
             }

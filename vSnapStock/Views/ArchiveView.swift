@@ -53,13 +53,13 @@ struct ArchiveView: View {
                     }
                 }
             )
-            .navigationTitle("アーカイブ")
+            .navigationTitle(String(localized: "archive.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("閉じる") {
+                    Button(String(localized: "button.close")) {
                         dismiss()
                     }
                 }
@@ -75,7 +75,7 @@ struct ArchiveView: View {
             Image(systemName: "archivebox")
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
-            Text("アーカイブが空です")
+            Text(String(localized: "archive.empty"))
                 .font(.headline)
                 .foregroundColor(.gray)
         }
@@ -111,7 +111,7 @@ struct ArchiveCardItem: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(card.title.isEmpty ? "無題" : card.title)
+                Text(card.title.isEmpty ? String(localized: "card.untitled") : card.title)
                     .font(.headline)
                     .lineLimit(1)
             }
@@ -125,7 +125,7 @@ struct ArchiveCardItem: View {
             Button {
                 card.unarchive()
             } label: {
-                Label("ホームに戻す", systemImage: "arrow.uturn.backward")
+                Label(String(localized: "button.return_home"), systemImage: "arrow.uturn.backward")
             }
 
             Divider()
@@ -133,7 +133,7 @@ struct ArchiveCardItem: View {
             Button(role: .destructive) {
                 card.moveToTrash()
             } label: {
-                Label("削除", systemImage: "trash")
+                Label(String(localized: "button.delete"), systemImage: "trash")
             }
         }
     }

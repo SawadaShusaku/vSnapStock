@@ -18,9 +18,9 @@ struct OCRSettingsView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text("表示数上限")
+                            Text(String(localized: "ocr.display_limit"))
                             Spacer()
-                            Text("\(settings.maxDisplayCount)件")
+                            Text("\(settings.maxDisplayCount)" + String(localized: "ocr.items"))
                                 .foregroundColor(.secondary)
                         }
                         Slider(
@@ -35,9 +35,9 @@ struct OCRSettingsView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text("スキャン間隔")
+                            Text(String(localized: "ocr.scan_interval"))
                             Spacer()
-                            Text(String(format: "%.1f秒", settings.scanInterval))
+                            Text(String(format: "%.1f", settings.scanInterval) + String(localized: "ocr.seconds"))
                                 .foregroundColor(.secondary)
                         }
                         Slider(
@@ -47,19 +47,19 @@ struct OCRSettingsView: View {
                         )
                     }
                 } header: {
-                    Text("表示設定")
+                    Text(String(localized: "ocr.display_settings"))
                 } footer: {
-                    Text("表示数を減らすとバウンディングボックスが見やすくなります")
+                    Text(String(localized: "ocr.display_settings_footer"))
                 }
 
                 // フィルタリング設定
                 Section {
-                    Toggle("小さなテキストを無視", isOn: $settings.filterSmallText)
+                    Toggle(String(localized: "ocr.ignore_small_text"), isOn: $settings.filterSmallText)
 
                     if settings.filterSmallText {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("最小面積")
+                                Text(String(localized: "ocr.minimum_area"))
                                 Spacer()
                                 Text(String(format: "%.1f%%", settings.minAreaThreshold))
                                     .foregroundColor(.secondary)
@@ -72,19 +72,19 @@ struct OCRSettingsView: View {
                         }
                     }
                 } header: {
-                    Text("フィルタリング")
+                    Text(String(localized: "ocr.filtering"))
                 } footer: {
-                    Text("画面の一定割合未満の小さなテキストを除外します")
+                    Text(String(localized: "ocr.minimum_area_footer"))
                 }
 
                 // 横書きテキスト結合（縦方向マージ）
                 Section {
-                    Toggle("横書きテキストを結合", isOn: $settings.mergeNearbyText)
+                    Toggle(String(localized: "ocr.merge_horizontal"), isOn: $settings.mergeNearbyText)
 
                     if settings.mergeNearbyText {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("結合距離（縦方向）")
+                                Text(String(localized: "ocr.merge_distance_vertical"))
                                 Spacer()
                                 Text(String(format: "%.1f%%", settings.mergeThreshold))
                                     .foregroundColor(.secondary)
@@ -97,19 +97,19 @@ struct OCRSettingsView: View {
                         }
                     }
                 } header: {
-                    Text("横書きテキスト結合")
+                    Text(String(localized: "ocr.merge_horizontal"))
                 } footer: {
-                    Text("縦方向に近いテキストを1つのボックスにまとめます")
+                    Text(String(localized: "ocr.merge_horizontal_footer"))
                 }
 
                 // 縦書きテキスト結合（横方向マージ）
                 Section {
-                    Toggle("縦書きテキストを結合", isOn: $settings.mergeVerticalText)
+                    Toggle(String(localized: "ocr.merge_vertical"), isOn: $settings.mergeVerticalText)
 
                     if settings.mergeVerticalText {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("結合距離（横方向）")
+                                Text(String(localized: "ocr.merge_distance_horizontal"))
                                 Spacer()
                                 Text(String(format: "%.1f%%", settings.verticalTextMergeThreshold))
                                     .foregroundColor(.secondary)
@@ -122,9 +122,9 @@ struct OCRSettingsView: View {
                         }
                     }
                 } header: {
-                    Text("縦書きテキスト結合")
+                    Text(String(localized: "ocr.merge_vertical"))
                 } footer: {
-                    Text("横方向に近いテキストを1つのボックスにまとめます（縦書き商品名用）")
+                    Text(String(localized: "ocr.merge_vertical_footer"))
                 }
 
                 // リセット
@@ -134,16 +134,16 @@ struct OCRSettingsView: View {
                     } label: {
                         HStack {
                             Image(systemName: "arrow.counterclockwise")
-                            Text("デフォルトに戻す")
+                            Text(String(localized: "button.reset_default"))
                         }
                     }
                 }
             }
-            .navigationTitle("OCR設定")
+            .navigationTitle(String(localized: "menu.ocr_settings"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完了") {
+                    Button(String(localized: "button.done")) {
                         dismiss()
                     }
                 }

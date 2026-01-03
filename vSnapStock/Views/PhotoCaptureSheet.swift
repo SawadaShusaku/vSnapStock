@@ -15,24 +15,44 @@ struct PhotoCaptureSheet: View {
     @Binding var recognizedDate: Date?
     var onDateRecognized: ((Date) -> Void)?
     var onProductNameRecognized: ((String) -> Void)?
+    var onDescriptionRecognized: ((String) -> Void)?
 
     @State private var cameraManager = CameraManager()
     @State private var capturedImages: [UIImage] = []
     @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var showingTextEditor = false
+    @State private var editingText = ""
+    @State private var editingTextType: TextScanType = .productName
+
+    /// テキスト読取の種類
+    enum TextScanType {
+        case productName
+        case description
+    }
 
     private let compressionQuality: CGFloat = 0.7
     private let maxPhotos = 10
+
+    /// 写真、日付、商品名、説明のいずれかがあれば完了可能
+    private var hasAnyContent: Bool {
+        !capturedImages.isEmpty ||
+        cameraManager.detectedDate != nil ||
+        cameraManager.selectedProductName != nil ||
+        cameraManager.selectedDescription != nil
+    }
 
     init(
         photos: Binding<[Data]>,
         recognizedDate: Binding<Date?> = .constant(nil),
         onDateRecognized: ((Date) -> Void)? = nil,
-        onProductNameRecognized: ((String) -> Void)? = nil
+        onProductNameRecognized: ((String) -> Void)? = nil,
+        onDescriptionRecognized: ((String) -> Void)? = nil
     ) {
         self._photos = photos
         self._recognizedDate = recognizedDate
         self.onDateRecognized = onDateRecognized
         self.onProductNameRecognized = onProductNameRecognized
+        self.onDescriptionRecognized = onDescriptionRecognized
     }
 
     var body: some View {
@@ -45,20 +65,20 @@ struct PhotoCaptureSheet: View {
                 controlButtons
             }
             .background(Color(.systemBackground))
-            .navigationTitle("写真を追加")
+            .navigationTitle(String(localized: "photo.add_photo"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button(String(localized: "button.cancel")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完了") {
+                    Button(String(localized: "button.done")) {
                         savePhotos()
                         dismiss()
                     }
-                    .disabled(capturedImages.isEmpty)
+                    .disabled(!hasAnyContent)
                 }
             }
             .task {
@@ -66,6 +86,22 @@ struct PhotoCaptureSheet: View {
             }
             .onDisappear {
                 cameraManager.stopSession()
+            }
+            .sheet(isPresented: $showingTextEditor) {
+                TextEditorSheet(
+                    text: $editingText,
+                    title: editingTextType == .productName ? String(localized: "photo.edit_product_name") : String(localized: "photo.edit_description"),
+                    placeholder: editingTextType == .productName ? String(localized: "photo.enter_product_name") : String(localized: "photo.enter_description"),
+                    onSave: {
+                        switch editingTextType {
+                        case .productName:
+                            cameraManager.selectedProductName = editingText
+                        case .description:
+                            cameraManager.selectedDescription = editingText
+                        }
+                    }
+                )
+                .presentationDetents([.height(200)])
             }
         }
     }
@@ -85,7 +121,7 @@ struct PhotoCaptureSheet: View {
                     ProgressView()
                         .scaleEffect(1.5)
                         .tint(.white)
-                    Text("カメラを起動中...")
+                    Text(String(localized: "photo.camera_starting"))
                         .foregroundColor(.white)
                         .padding(.top, 8)
                 }
@@ -114,8 +150,12 @@ struct PhotoCaptureSheet: View {
                     .frame(width: rect.width, height: rect.height)
                     .position(x: rect.midX, y: rect.midY)
                     .onTapGesture {
-                        if !item.isDate && cameraManager.isProductNameScanEnabled {
-                            cameraManager.selectProductName(item)
+                        if !item.isDate {
+                            if cameraManager.isProductNameScanEnabled && cameraManager.selectedProductName == nil {
+                                cameraManager.selectProductName(item)
+                            } else if cameraManager.isDescriptionScanEnabled && cameraManager.selectedDescription == nil {
+                                cameraManager.selectDescription(item)
+                            }
                         }
                     }
 
@@ -144,7 +184,8 @@ struct PhotoCaptureSheet: View {
     }
 
     private func isSelected(_ item: RecognizedTextItem) -> Bool {
-        cameraManager.selectedProductName == item.text
+        cameraManager.selectedProductName == item.text ||
+        cameraManager.selectedDescription == item.text
     }
 
     private func labelText(for item: RecognizedTextItem) -> String {
@@ -192,7 +233,7 @@ struct PhotoCaptureSheet: View {
                 }
 
                 if capturedImages.isEmpty {
-                    Text("撮影した写真がここに表示されます")
+                    Text(String(localized: "photo.captured_photos_appear_here"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -211,7 +252,7 @@ struct PhotoCaptureSheet: View {
             Toggle(isOn: $cameraManager.isDateScanEnabled) {
                 HStack {
                     Image(systemName: "calendar")
-                    Text("期限を読取")
+                    Text(String(localized: "photo.read_expiration_date"))
                 }
             }
             .toggleStyle(.switch)
@@ -229,27 +270,105 @@ struct PhotoCaptureSheet: View {
             Divider()
                 .padding(.horizontal)
 
-            // 商品名読取トグル
-            Toggle(isOn: $cameraManager.isProductNameScanEnabled) {
-                HStack {
-                    Image(systemName: "tag")
-                    Text("商品名を読取")
+            // 商品名読取（プルダウンで説明を読取も選択可能）
+            HStack {
+                Menu {
+                    Button {
+                        selectTextScanMode(.productName)
+                    } label: {
+                        HStack {
+                            Text(String(localized: "photo.read_product_name"))
+                            if currentTextScanMode == .productName {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+
+                    Button {
+                        selectTextScanMode(.description)
+                    } label: {
+                        HStack {
+                            Text(String(localized: "photo.read_description"))
+                            if currentTextScanMode == .description {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "tag")
+                        Text(currentTextScanMode == .productName ? String(localized: "photo.read_product_name") : String(localized: "photo.read_description"))
+                            .foregroundColor(.primary)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
+
+                Spacer()
+
+                Toggle("", isOn: isTextScanEnabled)
+                    .toggleStyle(.switch)
             }
-            .toggleStyle(.switch)
             .padding(.horizontal)
-            .onChange(of: cameraManager.isProductNameScanEnabled) { _, newValue in
-                if !newValue {
-                    cameraManager.resetProductNameDetection()
-                }
-            }
 
             if cameraManager.isProductNameScanEnabled {
                 productNameStatusView
+            } else if cameraManager.isDescriptionScanEnabled {
+                descriptionStatusView
             }
         }
         .padding(.vertical, 8)
         .background(Color(.systemGray6))
+    }
+
+    // MARK: - Text Scan Mode
+
+    @State private var textScanMode: TextScanType = .productName
+
+    private var currentTextScanMode: TextScanType {
+        textScanMode
+    }
+
+    private var isTextScanEnabled: Binding<Bool> {
+        Binding(
+            get: {
+                switch textScanMode {
+                case .productName:
+                    return cameraManager.isProductNameScanEnabled
+                case .description:
+                    return cameraManager.isDescriptionScanEnabled
+                }
+            },
+            set: { newValue in
+                switch textScanMode {
+                case .productName:
+                    cameraManager.isProductNameScanEnabled = newValue
+                    if !newValue {
+                        cameraManager.resetProductNameDetection()
+                    }
+                case .description:
+                    cameraManager.isDescriptionScanEnabled = newValue
+                    if !newValue {
+                        cameraManager.resetDescriptionDetection()
+                    }
+                }
+            }
+        )
+    }
+
+    private func selectTextScanMode(_ mode: TextScanType) {
+        textScanMode = mode
+        switch mode {
+        case .productName:
+            cameraManager.isDescriptionScanEnabled = false
+            cameraManager.resetDescriptionDetection()
+            cameraManager.isProductNameScanEnabled = true
+        case .description:
+            cameraManager.isProductNameScanEnabled = false
+            cameraManager.resetProductNameDetection()
+            cameraManager.isDescriptionScanEnabled = true
+        }
     }
 
     @ViewBuilder
@@ -272,7 +391,7 @@ struct PhotoCaptureSheet: View {
             HStack {
                 ProgressView()
                     .scaleEffect(0.8)
-                Text("日付を探しています...")
+                Text(String(localized: "photo.looking_for_date"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -282,13 +401,20 @@ struct PhotoCaptureSheet: View {
     @ViewBuilder
     private var productNameStatusView: some View {
         if let name = cameraManager.selectedProductName {
-            HStack {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.orange)
-                Text(name)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
+            HStack(spacing: 4) {
+                // タップで編集シートを開く
+                Button {
+                    editingText = name
+                    editingTextType = .productName
+                    showingTextEditor = true
+                } label: {
+                    Text(name)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
+                        .foregroundColor(.primary)
+                }
+
                 Button {
                     cameraManager.resetProductNameDetection()
                 } label: {
@@ -300,7 +426,42 @@ struct PhotoCaptureSheet: View {
             HStack {
                 Image(systemName: "hand.tap")
                     .foregroundColor(.orange)
-                Text("テキストをタップして選択...")
+                Text(String(localized: "photo.tap_text_to_select"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var descriptionStatusView: some View {
+        if let desc = cameraManager.selectedDescription {
+            HStack(spacing: 4) {
+                // タップで編集シートを開く
+                Button {
+                    editingText = desc
+                    editingTextType = .description
+                    showingTextEditor = true
+                } label: {
+                    Text(desc)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .lineLimit(1)
+                        .foregroundColor(.primary)
+                }
+
+                Button {
+                    cameraManager.resetDescriptionDetection()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
+            }
+        } else {
+            HStack {
+                Image(systemName: "hand.tap")
+                    .foregroundColor(.purple)
+                Text(String(localized: "photo.tap_text_to_select"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -310,18 +471,37 @@ struct PhotoCaptureSheet: View {
     // MARK: - Control Buttons
 
     private var controlButtons: some View {
-        HStack(spacing: 40) {
-            // フラッシュボタン
+        HStack(spacing: 20) {
+            // 1. ズームボタン（左端）
             Button {
-                cameraManager.isFlashEnabled.toggle()
+                cameraManager.toggleZoom()
             } label: {
-                Image(systemName: cameraManager.isFlashEnabled ? "bolt.fill" : "bolt.slash.fill")
-                    .font(.title2)
-                    .foregroundColor(cameraManager.isFlashEnabled ? .yellow : .gray)
-                    .frame(width: 50, height: 50)
+                Text(cameraManager.currentZoomFactor < 1.5 ? "1x" : "2x")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(cameraManager.currentZoomFactor < 1.5 ? .gray : .yellow)
+                    .frame(width: 44, height: 44)
+                    .background(
+                        Circle()
+                            .stroke(cameraManager.currentZoomFactor < 1.5 ? Color.gray : Color.yellow, lineWidth: 1.5)
+                    )
             }
 
-            // シャッターボタン
+            // 2. フォトライブラリボタン
+            PhotosPicker(
+                selection: $selectedItems,
+                maxSelectionCount: maxPhotos - photos.count - capturedImages.count,
+                matching: .images
+            ) {
+                Image(systemName: "photo.on.rectangle")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+                    .frame(width: 44, height: 44)
+            }
+            .onChange(of: selectedItems) { _, newItems in
+                loadSelectedPhotos(from: newItems)
+            }
+
+            // 3. シャッターボタン（中央）
             Button {
                 Task {
                     if let image = await cameraManager.capturePhoto() {
@@ -339,19 +519,24 @@ struct PhotoCaptureSheet: View {
                     }
             }
 
-            // フォトライブラリボタン
-            PhotosPicker(
-                selection: $selectedItems,
-                maxSelectionCount: maxPhotos - photos.count - capturedImages.count,
-                matching: .images
-            ) {
-                Image(systemName: "photo.on.rectangle")
+            // 4. フラッシュボタン（撮影時のフラッシュ）
+            Button {
+                cameraManager.isFlashEnabled.toggle()
+            } label: {
+                Image(systemName: cameraManager.isFlashEnabled ? "bolt.fill" : "bolt.slash.fill")
                     .font(.title2)
-                    .foregroundColor(.gray)
-                    .frame(width: 50, height: 50)
+                    .foregroundColor(cameraManager.isFlashEnabled ? .yellow : .gray)
+                    .frame(width: 44, height: 44)
             }
-            .onChange(of: selectedItems) { _, newItems in
-                loadSelectedPhotos(from: newItems)
+
+            // 5. ライトボタン（常時点灯トーチ、右端）
+            Button {
+                cameraManager.toggleTorch()
+            } label: {
+                Image(systemName: cameraManager.isTorchEnabled ? "flashlight.on.fill" : "flashlight.off.fill")
+                    .font(.title2)
+                    .foregroundColor(cameraManager.isTorchEnabled ? .yellow : .gray)
+                    .frame(width: 44, height: 44)
             }
         }
         .padding(.vertical, 30)
@@ -391,6 +576,10 @@ struct PhotoCaptureSheet: View {
         // 認識された商品名を保存
         if let name = cameraManager.selectedProductName {
             onProductNameRecognized?(name)
+        }
+        // 認識された説明を保存
+        if let desc = cameraManager.selectedDescription {
+            onDescriptionRecognized?(desc)
         }
     }
 
@@ -440,6 +629,62 @@ class CameraPreviewUIView: UIView {
 
     func updateFrame() {
         previewLayer.frame = bounds
+    }
+}
+
+// MARK: - Text Editor Sheet
+
+struct TextEditorSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var text: String
+    var title: String
+    var placeholder: String
+    var onSave: () -> Void
+
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 12) {
+                TextField(placeholder, text: $text)
+                    .font(.title2)
+                    .focused($isFocused)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        saveAndDismiss()
+                    }
+
+                Rectangle()
+                    .fill(Color.secondary.opacity(0.3))
+                    .frame(height: 1)
+
+                Spacer()
+            }
+            .padding()
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(String(localized: "button.cancel")) {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(String(localized: "button.save")) {
+                        saveAndDismiss()
+                    }
+                    .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+            .onAppear {
+                isFocused = true
+            }
+        }
+    }
+
+    private func saveAndDismiss() {
+        onSave()
+        dismiss()
     }
 }
 

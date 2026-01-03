@@ -92,7 +92,7 @@ struct HomeView: View {
                     }
                 }
             )
-            .navigationTitle("vSnapStock")
+            .navigationTitle(String(localized: "app.name"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -128,10 +128,10 @@ struct HomeView: View {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 60))
                 .foregroundColor(.gray)
-            Text("カードがありません")
+            Text(String(localized: "empty.no_cards"))
                 .font(.headline)
                 .foregroundColor(.gray)
-            Text("右下の＋ボタンから追加してください")
+            Text(String(localized: "empty.add_from_button"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -160,13 +160,13 @@ struct HomeView: View {
             Button {
                 showingArchive = true
             } label: {
-                Label("アーカイブ", systemImage: "archivebox")
+                Label(String(localized: "menu.archive"), systemImage: "archivebox")
             }
 
             Button {
                 showingTrash = true
             } label: {
-                Label("ゴミ箱", systemImage: "trash")
+                Label(String(localized: "menu.trash"), systemImage: "trash")
             }
 
             Divider()
@@ -174,19 +174,19 @@ struct HomeView: View {
             Button {
                 showingColorSettings = true
             } label: {
-                Label("カラー", systemImage: "paintpalette")
+                Label(String(localized: "menu.color"), systemImage: "paintpalette")
             }
 
             Button {
                 showingOCRSettings = true
             } label: {
-                Label("OCR設定", systemImage: "text.viewfinder")
+                Label(String(localized: "menu.ocr_settings"), systemImage: "text.viewfinder")
             }
 
             Button {
                 showingSettings = true
             } label: {
-                Label("設定", systemImage: "gearshape")
+                Label(String(localized: "menu.settings"), systemImage: "gearshape")
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -242,19 +242,19 @@ struct CardGridItem: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 // タイトル
-                Text(card.title.isEmpty ? "無題" : card.title)
+                Text(card.title.isEmpty ? String(localized: "card.untitled") : card.title)
                     .font(.headline)
                     .lineLimit(1)
 
                 // 期限表示（賞味期限 or 消費期限）
                 if let date = card.useByDate {
                     // 消費期限
-                    Text("消費期限: \(formatDate(date))")
+                    Text("\(String(localized: "date.use_by")): \(formatDate(date))")
                         .font(.caption)
                         .foregroundColor(expirationColor(for: date))
                 } else if let date = card.expirationDate {
                     // 賞味期限
-                    Text("賞味期限: \(formatDate(date))")
+                    Text("\(String(localized: "date.best_before")): \(formatDate(date))")
                         .font(.caption)
                         .foregroundColor(expirationColor(for: date))
                 }
@@ -269,7 +269,7 @@ struct CardGridItem: View {
             Button {
                 card.archive()
             } label: {
-                Label("アーカイブ", systemImage: "archivebox")
+                Label(String(localized: "menu.archive"), systemImage: "archivebox")
             }
 
             Divider()
@@ -277,7 +277,7 @@ struct CardGridItem: View {
             Button(role: .destructive) {
                 card.moveToTrash()
             } label: {
-                Label("削除", systemImage: "trash")
+                Label(String(localized: "button.delete"), systemImage: "trash")
             }
         }
     }

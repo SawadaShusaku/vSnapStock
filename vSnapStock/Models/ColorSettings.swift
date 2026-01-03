@@ -58,32 +58,32 @@ struct ColorPreset: Identifiable, Codable, Equatable {
     // デフォルトプリセット
     static let defaultPresets: [ColorPreset] = [
         ColorPreset(
-            name: "ライト",
+            name: String(localized: "color.preset.light"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.95, green: 0.95, blue: 0.97, alpha: 1.0)
         ),
         ColorPreset(
-            name: "ダーク",
+            name: String(localized: "color.preset.dark"),
             cardColor: RGBAColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         ),
         ColorPreset(
-            name: "クリーム",
+            name: String(localized: "color.preset.cream"),
             cardColor: RGBAColor(red: 1.0, green: 0.99, blue: 0.94, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.96, green: 0.93, blue: 0.85, alpha: 1.0)
         ),
         ColorPreset(
-            name: "ミント",
+            name: String(localized: "color.preset.mint"),
             cardColor: RGBAColor(red: 0.9, green: 1.0, blue: 0.95, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.82, green: 0.94, blue: 0.88, alpha: 1.0)
         ),
         ColorPreset(
-            name: "スカイ",
+            name: String(localized: "color.preset.sky"),
             cardColor: RGBAColor(red: 0.9, green: 0.95, blue: 1.0, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.82, green: 0.88, blue: 0.94, alpha: 1.0)
         ),
         ColorPreset(
-            name: "ピーチ",
+            name: String(localized: "color.preset.peach"),
             cardColor: RGBAColor(red: 1.0, green: 0.95, blue: 0.92, alpha: 1.0),
             backgroundColor: RGBAColor(red: 0.98, green: 0.88, blue: 0.82, alpha: 1.0)
         )
@@ -92,7 +92,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
     // グラデーションプリセット
     static let gradientPresets: [ColorPreset] = [
         ColorPreset(
-            name: "サンセット",
+            name: String(localized: "color.preset.sunset"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.9),
             backgroundColor: RGBAColor(red: 1.0, green: 0.6, blue: 0.4, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -103,7 +103,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
             )
         ),
         ColorPreset(
-            name: "オーシャン",
+            name: String(localized: "color.preset.ocean"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.9),
             backgroundColor: RGBAColor(red: 0.2, green: 0.6, blue: 0.9, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -114,7 +114,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
             )
         ),
         ColorPreset(
-            name: "オーロラ",
+            name: String(localized: "color.preset.aurora"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.85),
             backgroundColor: RGBAColor(red: 0.5, green: 0.3, blue: 0.8, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -125,7 +125,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
             )
         ),
         ColorPreset(
-            name: "フレイム",
+            name: String(localized: "color.preset.flame"),
             cardColor: RGBAColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 0.9),
             backgroundColor: RGBAColor(red: 0.9, green: 0.3, blue: 0.1, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -136,7 +136,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
             )
         ),
         ColorPreset(
-            name: "ギャラクシー",
+            name: String(localized: "color.preset.galaxy"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.9),
             backgroundColor: RGBAColor(red: 0.1, green: 0.1, blue: 0.3, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -147,7 +147,7 @@ struct ColorPreset: Identifiable, Codable, Equatable {
             )
         ),
         ColorPreset(
-            name: "フォレスト",
+            name: String(localized: "color.preset.forest"),
             cardColor: RGBAColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.9),
             backgroundColor: RGBAColor(red: 0.2, green: 0.5, blue: 0.3, alpha: 1.0),
             backgroundGradient: GradientSettings(
@@ -197,9 +197,9 @@ enum AppAppearanceMode: Int, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .system: return "システム"
-        case .light: return "ライト"
-        case .dark: return "ダーク"
+        case .system: return String(localized: "color.appearance.system")
+        case .light: return String(localized: "color.appearance.light")
+        case .dark: return String(localized: "color.appearance.dark")
         }
     }
 
