@@ -1,30 +1,26 @@
 //
-//  HomeView.swift
+//  FolderCardsView.swift
 //  vSnapStock
 //
-//  Created by Claude on 2025/12/28.
+//  Created by Claude on 2026/01/03.
 //
 
 import SwiftUI
 import SwiftData
 
-struct HomeView: View {
+struct FolderCardsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(
-        filter: #Predicate<Card> { card in
-            card.isArchived == false && card.isDeleted == false
-        },
-        sort: \Card.sortOrder
-    ) private var cards: [Card]
+    let folder: Folder
 
     @State private var showingAddSheet = false
     @State private var selectedCard: Card?
+    @State private var sortOption: SortOption = .expirationDateAsc
+    @State private var draggingCard: Card?
     @State private var showingArchive = false
     @State private var showingTrash = false
-    @State private var showingSettings = false
     @State private var showingColorSettings = false
     @State private var showingOCRSettings = false
-    @State private var draggingCard: Card?
+    @State private var showingNotificationSettings = false
     @State private var colorManager = ColorSettingsManager.shared
 
     private let columns = [
@@ -32,15 +28,67 @@ struct HomeView: View {
         GridItem(.flexible(), spacing: 12)
     ]
 
+    enum SortOption: String, CaseIterable {
+        case expirationDateAsc
+        case expirationDateDesc
+        case titleAsc
+        case custom
+
+        var localizedName: String {
+            switch self {
+            case .expirationDateAsc: return String(localized: "sort.expiration_asc")
+            case .expirationDateDesc: return String(localized: "sort.expiration_desc")
+            case .titleAsc: return String(localized: "sort.title_asc")
+            case .custom: return String(localized: "sort.custom")
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .expirationDateAsc: return "hourglass.bottomhalf.filled"
+            case .expirationDateDesc: return "hourglass.tophalf.filled"
+            case .titleAsc: return "textformat"
+            case .custom: return "list.bullet"
+            }
+        }
+    }
+
+    // フォルダのカードをフィルタリング
+    private var cards: [Card] {
+        let filtered = (folder.cards ?? [])
+            .filter { !$0.isArchived && !$0.isDeleted }
+
+        switch sortOption {
+        case .expirationDateAsc:
+            return filtered.sorted {
+                let date1 = $0.useByDate ?? $0.expirationDate ?? Date.distantFuture
+                let date2 = $1.useByDate ?? $1.expirationDate ?? Date.distantFuture
+                if date1 == date2 { return $0.sortOrder < $1.sortOrder }
+                return date1 < date2
+            }
+        case .expirationDateDesc:
+            return filtered.sorted {
+                let date1 = $0.useByDate ?? $0.expirationDate ?? Date.distantPast
+                let date2 = $1.useByDate ?? $1.expirationDate ?? Date.distantPast
+                if date1 == date2 { return $0.sortOrder < $1.sortOrder }
+                return date1 > date2
+            }
+        case .titleAsc:
+            return filtered.sorted { $0.title < $1.title }
+        case .custom:
+            return filtered.sorted { $0.sortOrder < $1.sortOrder }
+        }
+    }
+
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    if cards.isEmpty {
-                        emptyStateView
-                    } else {
-                        LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach(cards) { card in
+        ZStack(alignment: .bottomTrailing) {
+            ScrollView {
+                if cards.isEmpty {
+                    emptyStateView
+                } else {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(cards) { card in
+                            if sortOption == .custom {
                                 CardGridItem(card: card)
                                     .onTapGesture {
                                         selectedCard = card
@@ -62,26 +110,17 @@ struct HomeView: View {
                                         }
                                         reorderCards(from: sourceCard, to: card)
                                         return true
-                                    } isTargeted: { isTargeted in
-                                        // ドロップターゲット時のハイライト（オプション）
+                                    } isTargeted: { _ in }
+                            } else {
+                                CardGridItem(card: card)
+                                    .onTapGesture {
+                                        selectedCard = card
                                     }
                             }
                         }
-                        .padding()
                     }
+                    .padding()
                 }
-                .background(
-                    Group {
-                        if let gradient = colorManager.backgroundGradient {
-                            gradient
-                        } else {
-                            colorManager.backgroundColor
-                        }
-                    }
-                )
-
-                // 追加ボタン
-                addButton
             }
             .background(
                 Group {
@@ -91,35 +130,60 @@ struct HomeView: View {
                         colorManager.backgroundColor
                     }
                 }
+                .ignoresSafeArea()
             )
-            .navigationTitle(String(localized: "app.name"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(colorManager.hasBackgroundGradient ? .dark : nil, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+
+            addButton
+        }
+        .background(
+            Group {
+                if let gradient = colorManager.backgroundGradient {
+                    gradient
+                } else {
+                    colorManager.backgroundColor
+                }
+            }
+            .ignoresSafeArea()
+        )
+        // .navigationTitle(folder.name)
+        .navigationBarTitleDisplayMode(.large)
+        .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
+        // .toolbarBackground(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack {
+                    sortButton
                     menuButton
                 }
             }
-            .sheet(isPresented: $showingAddSheet) {
-                CardEditSheet(card: nil)
-            }
-            .sheet(item: $selectedCard) { card in
-                CardEditSheet(card: card)
-            }
-            .sheet(isPresented: $showingArchive) {
-                ArchiveView()
-            }
-            .sheet(isPresented: $showingTrash) {
-                TrashView()
-            }
-            .sheet(isPresented: $showingColorSettings) {
-                ColorSettingsView()
-            }
-            .sheet(isPresented: $showingOCRSettings) {
-                OCRSettingsView()
-            }
+        }
+        .sheet(isPresented: $showingAddSheet) {
+            CardEditSheet(card: nil, folder: folder)
+        }
+        .sheet(item: $selectedCard) { card in
+            CardEditSheet(card: card, folder: folder)
+        }
+        .sheet(isPresented: $showingArchive) {
+            ArchiveView()
+        }
+        .sheet(isPresented: $showingTrash) {
+            TrashView()
+        }
+        .sheet(isPresented: $showingColorSettings) {
+            ColorSettingsView()
+        }
+        .sheet(isPresented: $showingOCRSettings) {
+            OCRSettingsView()
+        }
+        .sheet(isPresented: $showingNotificationSettings) {
+            NotificationSettingsView()
+        }
+        .onAppear {
+            UserDefaults.standard.set(folder.id.uuidString, forKey: "LastOpenedFolderId")
+            loadSortOption()
+        }
+        .onChange(of: sortOption) { _, newValue in
+            saveSortOption(newValue)
         }
     }
 
@@ -155,6 +219,20 @@ struct HomeView: View {
         .padding()
     }
 
+    private var sortButton: some View {
+        Menu {
+            Picker(String(localized: "menu.sort"), selection: $sortOption) {
+                ForEach(SortOption.allCases, id: \.self) { option in
+                    Label(option.localizedName, systemImage: option.systemImage)
+                        .tag(option)
+                }
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down.circle")
+                .font(.title3)
+        }
+    }
+
     private var menuButton: some View {
         Menu {
             Button {
@@ -184,9 +262,9 @@ struct HomeView: View {
             }
 
             Button {
-                showingSettings = true
+                showingNotificationSettings = true
             } label: {
-                Label(String(localized: "menu.settings"), systemImage: "gearshape")
+                Label(String(localized: "menu.notification_settings"), systemImage: "bell")
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -201,7 +279,6 @@ struct HomeView: View {
         }
 
         withAnimation {
-            // 新しい順序を計算して各カードに割り当て
             var reorderedCards = Array(cards)
             let movedCard = reorderedCards.remove(at: sourceIndex)
             reorderedCards.insert(movedCard, at: destIndex)
@@ -210,6 +287,21 @@ struct HomeView: View {
                 card.sortOrder = index
             }
         }
+    }
+
+    private func sortOptionKey() -> String {
+        "SortOption_\(folder.id.uuidString)"
+    }
+
+    private func loadSortOption() {
+        if let savedSortRawValue = UserDefaults.standard.string(forKey: sortOptionKey()),
+           let savedSortOption = SortOption(rawValue: savedSortRawValue) {
+            sortOption = savedSortOption
+        }
+    }
+
+    private func saveSortOption(_ option: SortOption) {
+        UserDefaults.standard.set(option.rawValue, forKey: sortOptionKey())
     }
 }
 
@@ -249,12 +341,12 @@ struct CardGridItem: View {
                 // 期限表示（賞味期限 or 消費期限）
                 if let date = card.useByDate {
                     // 消費期限
-                    Text("\(String(localized: "date.use_by")): \(formatDate(date))")
+                    Text(String(localized: "date.use_by_format \(formatDate(date))"))
                         .font(.caption)
                         .foregroundColor(expirationColor(for: date))
                 } else if let date = card.expirationDate {
                     // 賞味期限
-                    Text("\(String(localized: "date.best_before")): \(formatDate(date))")
+                    Text(String(localized: "date.best_before_format \(formatDate(date))"))
                         .font(.caption)
                         .foregroundColor(expirationColor(for: date))
                 }
@@ -268,6 +360,7 @@ struct CardGridItem: View {
         .contextMenu {
             Button {
                 card.archive()
+                NotificationManager.shared.cancelNotification(for: card)
             } label: {
                 Label(String(localized: "menu.archive"), systemImage: "archivebox")
             }
@@ -276,6 +369,7 @@ struct CardGridItem: View {
 
             Button(role: .destructive) {
                 card.moveToTrash()
+                NotificationManager.shared.cancelNotification(for: card)
             } label: {
                 Label(String(localized: "button.delete"), systemImage: "trash")
             }
@@ -284,7 +378,9 @@ struct CardGridItem: View {
 
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd"
+        formatter.locale = Locale.current
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         return formatter.string(from: date)
     }
 
@@ -298,9 +394,4 @@ struct CardGridItem: View {
             return .secondary
         }
     }
-}
-
-#Preview {
-    HomeView()
-        .modelContainer(for: Card.self, inMemory: true)
 }

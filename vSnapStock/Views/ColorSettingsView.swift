@@ -167,8 +167,21 @@ struct ColorSettingsView: View {
                         )
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(
+                Group {
+                    if let gradient = colorManager.backgroundGradient {
+                        gradient
+                    } else {
+                        colorManager.backgroundColor
+                    }
+                }
+                .ignoresSafeArea()
+            )
             .navigationTitle(String(localized: "color.settings_title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "button.done")) {
@@ -246,12 +259,6 @@ struct PresetRow: View {
 
                 Text(preset.name)
                     .foregroundColor(.primary)
-
-                if preset.hasGradient {
-                    Image(systemName: "sparkles")
-                        .font(.caption)
-                        .foregroundColor(.purple)
-                }
 
                 Spacer()
 

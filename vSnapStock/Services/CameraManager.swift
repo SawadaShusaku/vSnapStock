@@ -5,7 +5,7 @@
 //  Created by Claude on 2025/12/28.
 //
 
-import AVFoundation
+@preconcurrency import AVFoundation
 import UIKit
 import Observation
 
@@ -76,17 +76,17 @@ final class CameraManager: NSObject {
             return
         }
 
-        let captureSession = session
+        let sessionWrapper = UncheckedSendable(value: session)
         sessionQueue.async {
-            captureSession.startRunning()
+            sessionWrapper.value.startRunning()
         }
         isSessionRunning = true
     }
 
     func stopSession() {
-        let captureSession = session
+        let sessionWrapper = UncheckedSendable(value: session)
         sessionQueue.async {
-            captureSession.stopRunning()
+            sessionWrapper.value.stopRunning()
         }
         isSessionRunning = false
     }
@@ -259,6 +259,10 @@ final class CameraManager: NSObject {
             }
         }
     }
+}
+
+private struct UncheckedSendable<T>: @unchecked Sendable {
+    let value: T
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate

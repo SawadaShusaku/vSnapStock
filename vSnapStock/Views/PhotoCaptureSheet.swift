@@ -16,13 +16,13 @@ struct PhotoCaptureSheet: View {
     var onDateRecognized: ((Date) -> Void)?
     var onProductNameRecognized: ((String) -> Void)?
     var onDescriptionRecognized: ((String) -> Void)?
+    var onCancel: (() -> Void)?
+    var onDone: (() -> Void)?
 
     @State private var cameraManager = CameraManager()
     @State private var capturedImages: [UIImage] = []
     @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var showingTextEditor = false
-    @State private var editingText = ""
-    @State private var editingTextType: TextScanType = .productName
+    @State private var colorManager = ColorSettingsManager.shared
 
     /// テキスト読取の種類
     enum TextScanType {
@@ -46,13 +46,17 @@ struct PhotoCaptureSheet: View {
         recognizedDate: Binding<Date?> = .constant(nil),
         onDateRecognized: ((Date) -> Void)? = nil,
         onProductNameRecognized: ((String) -> Void)? = nil,
-        onDescriptionRecognized: ((String) -> Void)? = nil
+        onDescriptionRecognized: ((String) -> Void)? = nil,
+        onCancel: (() -> Void)? = nil,
+        onDone: (() -> Void)? = nil
     ) {
         self._photos = photos
         self._recognizedDate = recognizedDate
         self.onDateRecognized = onDateRecognized
         self.onProductNameRecognized = onProductNameRecognized
         self.onDescriptionRecognized = onDescriptionRecognized
+        self.onCancel = onCancel
+        self.onDone = onDone
     }
 
     var body: some View {
@@ -64,19 +68,38 @@ struct PhotoCaptureSheet: View {
                 recognitionSettings
                 controlButtons
             }
-            .background(Color(.systemBackground))
+            .background(
+                Group {
+                    if let gradient = colorManager.backgroundGradient {
+                        gradient
+                    } else {
+                        colorManager.backgroundColor
+                    }
+                }
+                .ignoresSafeArea()
+            )
             .navigationTitle(String(localized: "photo.add_photo"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "button.cancel")) {
-                        dismiss()
+                        if let onCancel = onCancel {
+                            onCancel()
+                        } else {
+                            dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "button.done")) {
                         savePhotos()
-                        dismiss()
+                        if let onDone = onDone {
+                            onDone()
+                        } else {
+                            dismiss()
+                        }
                     }
                     .disabled(!hasAnyContent)
                 }
@@ -86,22 +109,6 @@ struct PhotoCaptureSheet: View {
             }
             .onDisappear {
                 cameraManager.stopSession()
-            }
-            .sheet(isPresented: $showingTextEditor) {
-                TextEditorSheet(
-                    text: $editingText,
-                    title: editingTextType == .productName ? String(localized: "photo.edit_product_name") : String(localized: "photo.edit_description"),
-                    placeholder: editingTextType == .productName ? String(localized: "photo.enter_product_name") : String(localized: "photo.enter_description"),
-                    onSave: {
-                        switch editingTextType {
-                        case .productName:
-                            cameraManager.selectedProductName = editingText
-                        case .description:
-                            cameraManager.selectedDescription = editingText
-                        }
-                    }
-                )
-                .presentationDetents([.height(200)])
             }
         }
     }
@@ -401,19 +408,12 @@ struct PhotoCaptureSheet: View {
     @ViewBuilder
     private var productNameStatusView: some View {
         if let name = cameraManager.selectedProductName {
-            HStack(spacing: 4) {
-                // タップで編集シートを開く
-                Button {
-                    editingText = name
-                    editingTextType = .productName
-                    showingTextEditor = true
-                } label: {
-                    Text(name)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .lineLimit(1)
-                        .foregroundColor(.primary)
-                }
+            HStack(spacing: 8) {
+                Text(name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
 
                 Button {
                     cameraManager.resetProductNameDetection()
@@ -436,19 +436,12 @@ struct PhotoCaptureSheet: View {
     @ViewBuilder
     private var descriptionStatusView: some View {
         if let desc = cameraManager.selectedDescription {
-            HStack(spacing: 4) {
-                // タップで編集シートを開く
-                Button {
-                    editingText = desc
-                    editingTextType = .description
-                    showingTextEditor = true
-                } label: {
-                    Text(desc)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .lineLimit(1)
-                        .foregroundColor(.primary)
-                }
+            HStack(spacing: 8) {
+                Text(desc)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
 
                 Button {
                     cameraManager.resetDescriptionDetection()
@@ -585,8 +578,9 @@ struct PhotoCaptureSheet: View {
 
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateFormat = "yyyy年M月d日"
+        formatter.locale = Locale.current
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
         return formatter.string(from: date)
     }
 }
@@ -629,62 +623,6 @@ class CameraPreviewUIView: UIView {
 
     func updateFrame() {
         previewLayer.frame = bounds
-    }
-}
-
-// MARK: - Text Editor Sheet
-
-struct TextEditorSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    @Binding var text: String
-    var title: String
-    var placeholder: String
-    var onSave: () -> Void
-
-    @FocusState private var isFocused: Bool
-
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 12) {
-                TextField(placeholder, text: $text)
-                    .font(.title2)
-                    .focused($isFocused)
-                    .submitLabel(.done)
-                    .onSubmit {
-                        saveAndDismiss()
-                    }
-
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.3))
-                    .frame(height: 1)
-
-                Spacer()
-            }
-            .padding()
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "button.cancel")) {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "button.save")) {
-                        saveAndDismiss()
-                    }
-                    .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            }
-            .onAppear {
-                isFocused = true
-            }
-        }
-    }
-
-    private func saveAndDismiss() {
-        onSave()
-        dismiss()
     }
 }
 

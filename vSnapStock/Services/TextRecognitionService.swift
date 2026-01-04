@@ -353,6 +353,18 @@ actor TextRecognitionService {
             }
         }
 
+        // 欧米形式の日付パターン
+        let internationalPatterns: [String] = [
+            #"([A-Za-z]{3,})\.?\s+(\d{1,2}),?\s+(\d{4})"#,   // Jan 3, 2026
+            #"(\d{1,2})\s+([A-Za-z]{3,})\.?\s+(\d{4})"#,     // 3 Jan 2026
+        ]
+
+        for pattern in internationalPatterns {
+            if let date = extractInternationalDate(from: text, pattern: pattern) {
+                return date
+            }
+        }
+
         // 年月のみのパターン（日付省略、月末を使用）
         let yearMonthPatterns: [String] = [
             #"(\d{2,4})[\.．]\s*(\d{1,2})(?![\.．/／\-ー\d])"#,  // 2026. 7 または 2026.7
@@ -450,5 +462,73 @@ actor TextRecognitionService {
         components.day = 0            // 翌月の0日 = 今月の最終日
 
         return Calendar.current.date(from: components)
+    }
+
+    /// 欧米形式の日付を抽出 (Jan 3, 2026 / 3 Jan 2026)
+    private nonisolated func extractInternationalDate(from text: String, pattern: String) -> Date? {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else {
+            return nil
+        }
+
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: range) else {
+            return nil
+        }
+
+        guard match.numberOfRanges >= 4 else { return nil }
+
+        // グループの順番を判定（月が先か、日が先か）
+        // パターン1: (Month) (Day) (Year) -> Jan 3, 2026
+        // パターン2: (Day) (Month) (Year) -> 3 Jan 2026
+
+        var day: Int = 0
+        var month: Int = 0
+        var year: Int = 0
+
+        let g1 = String(text[Range(match.range(at: 1), in: text)!])
+        let g2 = String(text[Range(match.range(at: 2), in: text)!])
+        let g3 = String(text[Range(match.range(at: 3), in: text)!])
+
+        if let m = monthFromName(g1), let d = Int(g2), let y = Int(g3) {
+            month = m; day = d; year = y
+        } else if let d = Int(g1), let m = monthFromName(g2), let y = Int(g3) {
+            day = d; month = m; year = y
+        } else {
+            return nil
+        }
+
+        // 妥当性チェック
+        guard year >= 2000 && year <= 2100,
+              month >= 1 && month <= 12,
+              day >= 1 && day <= 31 else {
+            return nil
+        }
+
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = day
+
+        return Calendar.current.date(from: components)
+    }
+
+    /// 月名から数値を変換
+    private nonisolated func monthFromName(_ name: String) -> Int? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        // 短縮形 (Jan) と完全形 (January) の両方をチェック
+        if let index = formatter.shortMonthSymbols.firstIndex(where: { $0.caseInsensitiveCompare(name) == .orderedSame }) {
+            return index + 1
+        }
+        if let index = formatter.monthSymbols.firstIndex(where: { $0.caseInsensitiveCompare(name) == .orderedSame }) {
+            return index + 1
+        }
+        // ピリオド付き (Jan.) の対応
+        let cleanName = name.replacingOccurrences(of: ".", with: "")
+        if let index = formatter.shortMonthSymbols.firstIndex(where: { $0.caseInsensitiveCompare(cleanName) == .orderedSame }) {
+            return index + 1
+        }
+        return nil
     }
 }

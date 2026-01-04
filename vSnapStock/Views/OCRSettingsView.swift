@@ -10,6 +10,7 @@ import SwiftUI
 struct OCRSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var settings = OCRSettingsManager.shared
+    @State private var colorManager = ColorSettingsManager.shared
 
     var body: some View {
         NavigationStack {
@@ -20,7 +21,7 @@ struct OCRSettingsView: View {
                         HStack {
                             Text(String(localized: "ocr.display_limit"))
                             Spacer()
-                            Text("\(settings.maxDisplayCount)" + String(localized: "ocr.items"))
+                            Text(String(localized: "ocr.items_count \(settings.maxDisplayCount)"))
                                 .foregroundColor(.secondary)
                         }
                         Slider(
@@ -37,7 +38,7 @@ struct OCRSettingsView: View {
                         HStack {
                             Text(String(localized: "ocr.scan_interval"))
                             Spacer()
-                            Text(String(format: "%.1f", settings.scanInterval) + String(localized: "ocr.seconds"))
+                            Text(String(localized: "ocr.seconds_value \(String(format: "%.1f", settings.scanInterval))"))
                                 .foregroundColor(.secondary)
                         }
                         Slider(
@@ -61,7 +62,7 @@ struct OCRSettingsView: View {
                             HStack {
                                 Text(String(localized: "ocr.minimum_area"))
                                 Spacer()
-                                Text(String(format: "%.1f%%", settings.minAreaThreshold))
+                                Text(String(localized: "ocr.percentage_value \(String(format: "%.1f", settings.minAreaThreshold))"))
                                     .foregroundColor(.secondary)
                             }
                             Slider(
@@ -86,7 +87,7 @@ struct OCRSettingsView: View {
                             HStack {
                                 Text(String(localized: "ocr.merge_distance_vertical"))
                                 Spacer()
-                                Text(String(format: "%.1f%%", settings.mergeThreshold))
+                                Text(String(localized: "ocr.percentage_value \(String(format: "%.1f", settings.mergeThreshold))"))
                                     .foregroundColor(.secondary)
                             }
                             Slider(
@@ -111,7 +112,7 @@ struct OCRSettingsView: View {
                             HStack {
                                 Text(String(localized: "ocr.merge_distance_horizontal"))
                                 Spacer()
-                                Text(String(format: "%.1f%%", settings.verticalTextMergeThreshold))
+                                Text(String(localized: "ocr.percentage_value \(String(format: "%.1f", settings.verticalTextMergeThreshold))"))
                                     .foregroundColor(.secondary)
                             }
                             Slider(
@@ -139,8 +140,21 @@ struct OCRSettingsView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(
+                Group {
+                    if let gradient = colorManager.backgroundGradient {
+                        gradient
+                    } else {
+                        colorManager.backgroundColor
+                    }
+                }
+                .ignoresSafeArea()
+            )
             .navigationTitle(String(localized: "menu.ocr_settings"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "button.done")) {

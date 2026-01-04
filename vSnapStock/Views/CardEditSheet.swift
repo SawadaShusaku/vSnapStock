@@ -14,6 +14,7 @@ struct CardEditSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let card: Card?
+    let folder: Folder?
 
     @State private var title: String = ""
     @State private var cardDescription: String = ""
@@ -24,6 +25,8 @@ struct CardEditSheet: View {
     @State private var showPhotoSheet = false
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var expirationType: ExpirationType = .bestBefore
+    @State private var colorManager = ColorSettingsManager.shared
+    @State private var isInitialCameraMode: Bool
 
     enum ExpirationType: CaseIterable {
         case bestBefore
@@ -46,12 +49,46 @@ struct CardEditSheet: View {
 
     private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateFormat = "yyyy年M月d日"
+        formatter.locale = Locale.current
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
         return formatter
     }
 
+    init(card: Card?, folder: Folder?) {
+        self.card = card
+        self.folder = folder
+        // 新規作成時は最初にカメラを表示するモードで開始
+        _isInitialCameraMode = State(initialValue: card == nil)
+    }
+
     var body: some View {
+        if isInitialCameraMode {
+            // 新規作成時の初期カメラ表示（シートを重ねずに表示）
+            PhotoCaptureSheet(
+                photos: $photos,
+                onDateRecognized: { date in
+                    setCurrentDate(date)
+                },
+                onProductNameRecognized: { name in
+                    title = String(name.prefix(maxTitleLength))
+                },
+                onDescriptionRecognized: { desc in
+                    cardDescription = String(desc.prefix(maxDescriptionLength))
+                },
+                onCancel: {
+                    dismiss()
+                },
+                onDone: {
+                    isInitialCameraMode = false
+                }
+            )
+        } else {
+            formView
+        }
+    }
+
+    var formView: some View {
         NavigationStack {
             Form {
                 // 写真セクション
@@ -63,8 +100,21 @@ struct CardEditSheet: View {
                 // 期限セクション
                 expirationSection
             }
+            .scrollContentBackground(.hidden)
+            .background(
+                Group {
+                    if let gradient = colorManager.backgroundGradient {
+                        gradient
+                    } else {
+                        colorManager.backgroundColor
+                    }
+                }
+                .ignoresSafeArea()
+            )
             .navigationTitle(isNewCard ? String(localized: "card.new_title") : String(localized: "card.edit_title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(colorManager.backgroundColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "button.cancel")) {
@@ -80,10 +130,6 @@ struct CardEditSheet: View {
             }
             .onAppear {
                 loadCardData()
-                // 新規カードの場合、自動でカメラシートを開く
-                if isNewCard {
-                    showPhotoSheet = true
-                }
             }
             .sheet(isPresented: $showPhotoSheet) {
                 PhotoCaptureSheet(
@@ -165,7 +211,7 @@ struct CardEditSheet: View {
 
     private var basicInfoSection: some View {
         Section {
-            TextField("タイトル", text: $title)
+            TextField(String(localized: "card.title_placeholder", defaultValue: "タイトル"), text: $title)
                 .onChange(of: title) { _, newValue in
                     if newValue.count > maxTitleLength {
                         title = String(newValue.prefix(maxTitleLength))
@@ -252,7 +298,7 @@ struct CardEditSheet: View {
                     displayedComponents: .date
                 )
                 .datePickerStyle(.graphical)
-                .environment(\.locale, Locale(identifier: "ja_JP"))
+                .environment(\.locale, Locale.current)
             }
         }
     }
@@ -322,6 +368,7 @@ struct CardEditSheet: View {
             card.expirationDate = expirationDate
             card.useByDate = useByDate
             card.touch()
+            NotificationManager.shared.scheduleNotification(for: card)
         } else {
             // 既存カードのsortOrderを1ずつ増やす
             let descriptor = FetchDescriptor<Card>(
@@ -340,14 +387,16 @@ struct CardEditSheet: View {
                 photos: photos,
                 expirationDate: expirationDate,
                 useByDate: useByDate,
-                sortOrder: 0
+                sortOrder: 0,
+                folder: folder
             )
             modelContext.insert(newCard)
+            NotificationManager.shared.scheduleNotification(for: newCard)
         }
     }
 }
 
 #Preview {
-    CardEditSheet(card: nil)
+    CardEditSheet(card: nil, folder: nil)
         .modelContainer(for: Card.self, inMemory: true)
 }

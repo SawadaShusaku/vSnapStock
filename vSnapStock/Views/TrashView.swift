@@ -51,6 +51,7 @@ struct TrashView: View {
                         colorManager.backgroundColor
                     }
                 }
+                .ignoresSafeArea()
             )
             .navigationTitle(String(localized: "trash.title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -103,17 +104,20 @@ struct TrashView: View {
     }
 
     private func deleteCard(_ card: Card) {
+        NotificationManager.shared.cancelNotification(for: card)
         modelContext.delete(card)
     }
 
     private func emptyTrash() {
         for card in deletedCards {
+            NotificationManager.shared.cancelNotification(for: card)
             modelContext.delete(card)
         }
     }
 
     private func cleanupExpiredCards() {
         for card in deletedCards where card.shouldBeDeleted {
+            NotificationManager.shared.cancelNotification(for: card)
             modelContext.delete(card)
         }
     }
@@ -195,7 +199,7 @@ struct TrashCardItem: View {
         } else if daysLeft == 1 {
             return String(localized: "trash.delete_in_1_day")
         } else {
-            return String(localized: "trash.delete_in_days", defaultValue: "Delete in \(daysLeft) days")
+            return String(localized: "trash.delete_in_days \(daysLeft)")
         }
     }
 }

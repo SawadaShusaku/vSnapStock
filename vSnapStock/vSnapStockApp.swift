@@ -13,7 +13,7 @@ struct vSnapStockApp: App {
     @State private var colorManager = ColorSettingsManager.shared
 
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([Card.self])
+        let schema = Schema([Card.self, Folder.self])
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -31,6 +31,9 @@ struct vSnapStockApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(colorManager.appearanceMode.colorScheme)
+                .onAppear {
+                    NotificationManager.shared.requestAuthorization()
+                }
         }
         .modelContainer(sharedModelContainer)
     }

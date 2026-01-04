@@ -22,6 +22,7 @@ final class Card {
     var isDeleted: Bool
     var deletedAt: Date?
     var sortOrder: Int
+    var folder: Folder?
 
     init(
         id: UUID = UUID(),
@@ -35,7 +36,8 @@ final class Card {
         isArchived: Bool = false,
         isDeleted: Bool = false,
         deletedAt: Date? = nil,
-        sortOrder: Int = 0
+        sortOrder: Int = 0,
+        folder: Folder? = nil
     ) {
         self.id = id
         self.title = title
@@ -49,6 +51,7 @@ final class Card {
         self.isDeleted = isDeleted
         self.deletedAt = deletedAt
         self.sortOrder = sortOrder
+        self.folder = folder
     }
 
     /// 更新日時を自動更新

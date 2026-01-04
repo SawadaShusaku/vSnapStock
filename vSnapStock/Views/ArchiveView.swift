@@ -52,6 +52,7 @@ struct ArchiveView: View {
                         colorManager.backgroundColor
                     }
                 }
+                .ignoresSafeArea()
             )
             .navigationTitle(String(localized: "archive.title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -65,7 +66,7 @@ struct ArchiveView: View {
                 }
             }
             .sheet(item: $selectedCard) { card in
-                CardEditSheet(card: card)
+                CardEditSheet(card: card, folder: card.folder)
             }
         }
     }
@@ -124,6 +125,7 @@ struct ArchiveCardItem: View {
         .contextMenu {
             Button {
                 card.unarchive()
+                NotificationManager.shared.scheduleNotification(for: card)
             } label: {
                 Label(String(localized: "button.return_home"), systemImage: "arrow.uturn.backward")
             }
@@ -132,6 +134,7 @@ struct ArchiveCardItem: View {
 
             Button(role: .destructive) {
                 card.moveToTrash()
+                NotificationManager.shared.cancelNotification(for: card)
             } label: {
                 Label(String(localized: "button.delete"), systemImage: "trash")
             }
