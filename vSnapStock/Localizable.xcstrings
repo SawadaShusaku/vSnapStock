@@ -1,5 +1,5 @@
 {
-  "sourceLanguage" : "en",
+  "sourceLanguage" : "ja",
   "strings" : {
     "" : {
 
@@ -4994,13 +4994,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fotos (%lld/10)"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "state" : "translated",
-            "value" : "Photos (%lld/10)"
           }
         },
         "es" : {
