@@ -88,6 +88,7 @@ struct ArchiveView: View {
 // MARK: - Archive Card Item
 struct ArchiveCardItem: View {
     let card: Card
+    @Environment(\.modelContext) private var modelContext
     @State private var colorManager = ColorSettingsManager.shared
 
     var body: some View {
@@ -135,6 +136,7 @@ struct ArchiveCardItem: View {
             Button(role: .destructive) {
                 card.moveToTrash()
                 NotificationManager.shared.cancelNotification(for: card)
+                try? modelContext.save()
             } label: {
                 Label(String(localized: "button.delete"), systemImage: "trash")
             }

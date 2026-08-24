@@ -11,6 +11,7 @@ import SwiftData
 struct FolderCardsView: View {
     @Environment(\.modelContext) private var modelContext
     let folder: Folder
+    @Query private var queriedCards: [Card]
 
     @State private var showingAddSheet = false
     @State private var selectedCard: Card?
@@ -22,6 +23,17 @@ struct FolderCardsView: View {
     @State private var showingOCRSettings = false
     @State private var showingNotificationSettings = false
     @State private var colorManager = ColorSettingsManager.shared
+
+    init(folder: Folder) {
+        self.folder = folder
+        let folderId = folder.id
+        let predicate = #Predicate<Card> { card in
+            card.folder?.id == folderId &&
+            card.isArchived == false &&
+            card.isDeleted == false
+        }
+        _queriedCards = Query(filter: predicate)
+    }
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -55,8 +67,7 @@ struct FolderCardsView: View {
 
     // フォルダのカードをフィルタリング
     private var cards: [Card] {
-        let filtered = (folder.cards ?? [])
-            .filter { !$0.isArchived && !$0.isDeleted }
+        let filtered = queriedCards
 
         switch sortOption {
         case .expirationDateAsc:
@@ -370,6 +381,7 @@ struct CardGridItem: View {
             Button(role: .destructive) {
                 card.moveToTrash()
                 NotificationManager.shared.cancelNotification(for: card)
+                try? modelContext.save()
             } label: {
                 Label(String(localized: "button.delete"), systemImage: "trash")
             }
